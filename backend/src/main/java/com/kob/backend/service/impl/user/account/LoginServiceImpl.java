@@ -27,8 +27,6 @@ public class LoginServiceImpl implements LoginService {
         try {
             Authentication authenticate = authenticationManager.authenticate(authenticationToken);  // 登录失败会自动处理
 
-            System.out.println("test1" + " " + username + " " + password);  // 测试1
-
             UserDetailsImpl loginUser = (UserDetailsImpl) authenticate.getPrincipal();
             User user = loginUser.getUser();
             String jwt = JwtUtil.createJWT(user.getId().toString());
@@ -36,9 +34,6 @@ public class LoginServiceImpl implements LoginService {
             Map<String, String> map = new HashMap<>();
             map.put("error_message", "success");
             map.put("token", jwt);
-
-            System.out.println("test2" + " " + username + " " + password);  //测试2
-            System.out.println(map);  // 测试三
 
             return map;
         } catch (Exception e) {
