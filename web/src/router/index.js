@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import PkIndexView from '@/views/pk/PkIndexView.vue';
 import RanklistIndexView from '@/views/ranklist/RanklistIndexView.vue';
 import RecordIndexView from '@/views/record/RecordIndexView.vue';
-import UserBotIndexView from '@/views/user/bots/UserBotIndexView.vue';
+import UserBotIndexView from '@/views/user/bot/UserBotIndexView.vue';
 import NotFoundView from '@/views/error/NotFoundView.vue';
 import UserAccountLoginView from '@/views/user/account/UserAccountLoginView.vue';
 import UserAccountRegisterView from '@/views/user/account/UserAccountRegisterView.vue';
