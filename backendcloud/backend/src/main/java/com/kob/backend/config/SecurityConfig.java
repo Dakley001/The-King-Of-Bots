@@ -45,7 +45,7 @@ public class SecurityConfig {
         http.csrf(CsrfConfigurer::disable) // 基于token，不需要csrf
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 基于token，不需要session
                 .authorizeHttpRequests((authz) -> authz
-                        .requestMatchers(new AntPathRequestMatcher("/user/account/token/"), new AntPathRequestMatcher("/user/account/register/")).permitAll() // 放行api
+                        .requestMatchers(new AntPathRequestMatcher("/api/user/account/token/"), new AntPathRequestMatcher("/api/user/account/register/")).permitAll() // 放行api
                         .requestMatchers(new AntPathRequestMatcher("/pk/start/game/"), new AntPathRequestMatcher("/pk/receive/bot/move/"))
                         .access((authentication, context) -> {
                             boolean matches = ipAddressMatcher.matches(context.getRequest());
