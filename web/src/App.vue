@@ -1,21 +1,21 @@
 <template>
-  <NavBar></NavBar>
-  <router-view/>
+    <NavBar></NavBar>
+    <router-view />
 </template>
 
 <script>
 import NavBar from '@/components/NavBar.vue';
 
 export default {
-  components: {
-    NavBar,
-  },
+    components: {
+        NavBar,
+    },
 }
 </script>
 
 <style>
 body {
-  background-image: url("./assets/images/background.png");
-  background-size: cover;
+    background-image: url("./assets/images/background.JPG");
+    background-size: cover;
 }
 </style>

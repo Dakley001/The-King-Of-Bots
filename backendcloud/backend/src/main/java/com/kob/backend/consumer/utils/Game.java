@@ -14,12 +14,12 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class Game extends Thread{
+public class Game extends Thread {
     private final Integer rows;
     private final Integer cols;
     private final Integer inner_walls_count;
-    private final int[][] g;
-    private final static int[] dx = {-1, 0, 1, 0}, dy = {0, 1, 0, -1};
+    private final int[][] g;  // 存储地图信息
+    private final static int[] dx = {-1, 0, 1, 0}, dy = {0, 1, 0, -1};  // 分别为向左下右上的四个偏移量
     private final Player playerA, playerB;
     private Integer nextStepA = null;
     private Integer nextStepB = null;
@@ -44,11 +44,11 @@ public class Game extends Thread{
 
         Integer botIdA = -1, botIdB = -1;
         String botCodeA = "", botCodeB = "";
-        if(botA != null) {
+        if (botA != null) {
             botIdA = botA.getId();
             botCodeA = botA.getContent();
         }
-        if(botB != null) {
+        if (botB != null) {
             botIdB = botB.getId();
             botCodeB = botB.getContent();
         }
@@ -60,7 +60,6 @@ public class Game extends Thread{
     public Player getPlayerA() {
         return playerA;
     }
-
     public Player getPlayerB() {
         return playerB;
     }
@@ -73,7 +72,6 @@ public class Game extends Thread{
             lock.unlock();
         }
     }
-
     public void setNextStepB(Integer nextStepB) {
         lock.lock();
         try {
@@ -84,15 +82,17 @@ public class Game extends Thread{
     }
 
 
+    // 获取地图信息
     public int[][] getG() {
         return g;
     }
 
+    // 通过洪水覆盖算法检查地图可行性
     private boolean check_connectivity(int sx, int sy, int tx, int ty) {
         if (sx == tx && sy == ty) return true;
         g[sx][sy] = 1;
 
-        for (int i = 0; i < 4; i ++ ) {
+        for (int i = 0; i < 4; i++) {
             int x = sx + dx[i], y = sy + dy[i];
             if (x >= 0 && x < this.rows && y >= 0 && y < this.cols && g[x][y] == 0) {
                 if (check_connectivity(x, y, tx, ty)) {
@@ -106,23 +106,25 @@ public class Game extends Thread{
         return false;
     }
 
-    private boolean draw() {  // 画地图
-        for (int i = 0; i < this.rows; i ++ ) {
-            for (int j = 0; j < this.cols; j ++ ) {
+    // 绘制地图
+    private boolean draw() {
+        for (int i = 0; i < this.rows; i++) {
+            for (int j = 0; j < this.cols; j++) {
                 g[i][j] = 0;
             }
         }
 
-        for (int r = 0; r < this.rows; r ++ ) {
+        // 地图四个边设置为墙
+        for (int r = 0; r < this.rows; r++) {
             g[r][0] = g[r][this.cols - 1] = 1;
         }
-        for (int c = 0; c < this.cols; c ++ ) {
+        for (int c = 0; c < this.cols; c++) {
             g[0][c] = g[this.rows - 1][c] = 1;
         }
 
         Random random = new Random();
-        for (int i = 0; i < this.inner_walls_count / 2; i ++ ) {
-            for (int j = 0; j < 1000; j ++ ) {
+        for (int i = 0; i < this.inner_walls_count / 2; i++) {
+            for (int j = 0; j < 1000; j++) {
                 int r = random.nextInt(this.rows);
                 int c = random.nextInt(this.cols);
 
@@ -139,14 +141,27 @@ public class Game extends Thread{
         return check_connectivity(this.rows - 2, 1, 1, this.cols - 2);
     }
 
+    // 绘制合法的地图
     public void createMap() {
-        for (int i = 0; i < 1000; i ++ ) {
+        for (int i = 0; i < 1000; i++) {
             if (draw())
                 break;
         }
     }
 
-    private String getInput(Player player) {  // 将当前的局面信息，编码成字符串
+    // 将合法的地图转换为字符串
+    private String getMapString() {
+        StringBuilder res = new StringBuilder();
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                res.append(g[i][j]);
+            }
+        }
+        return res.toString();
+    }
+
+    // 将当前的局面信息，编码成字符串
+    private String getInput(Player player) {
         Player me, you;
         if (playerA.getId().equals(player.getId())) {
             me = playerA;
@@ -165,6 +180,7 @@ public class Game extends Thread{
                 you.getStepsString() + ")";
     }
 
+    // 若为"亲自出马"则返回，否则将Bot代码转发至BotRunningSystem解析处理
     private void sendBotCode(Player player) {
         if (player.getBotId().equals(-1)) return;  // 亲自出马，不需要执行代码
         MultiValueMap<String, String> data = new LinkedMultiValueMap<>();
@@ -175,7 +191,8 @@ public class Game extends Thread{
     }
 
 
-    private boolean nextStep() {  // 等待两名玩家的下一步操作
+    // 等待两名玩家的下一步操作
+    private boolean nextStep() {
         try {
             Thread.sleep(200);
         } catch (InterruptedException e) {
@@ -185,7 +202,7 @@ public class Game extends Thread{
         sendBotCode(playerA);
         sendBotCode(playerB);
 
-        for (int i = 0; i < 50; i ++ ) {
+        for (int i = 0; i < 50; i++) {
             try {
                 Thread.sleep(100);
                 lock.lock();
@@ -206,17 +223,18 @@ public class Game extends Thread{
         return false;
     }
 
+    // 检查用户操作合法性
     private boolean check_valid(List<Cell> cellsA, List<Cell> cellsB) {
         int n = cellsA.size();
         Cell cell = cellsA.get(n - 1);
         if (g[cell.x][cell.y] == 1) return false;
 
-        for (int i = 0; i < n - 1; i ++ ) {
+        for (int i = 0; i < n - 1; i++) {
             if (cellsA.get(i).x == cell.x && cellsA.get(i).y == cell.y)
                 return false;
         }
 
-        for (int i = 0; i < n - 1; i ++ ) {
+        for (int i = 0; i < n - 1; i++) {
             if (cellsB.get(i).x == cell.x && cellsB.get(i).y == cell.y)
                 return false;
         }
@@ -224,6 +242,7 @@ public class Game extends Thread{
         return true;
     }
 
+    // 判断游戏结果
     private void judge() {  // 判断两名玩家下一步操作是否合法
         List<Cell> cellsA = playerA.getCells();
         List<Cell> cellsB = playerB.getCells();
@@ -243,6 +262,7 @@ public class Game extends Thread{
         }
     }
 
+    // 发送消息函数
     private void sendAllMessage(String message) {
         if (WebSocketServer.users.get(playerA.getId()) != null)
             WebSocketServer.users.get(playerA.getId()).sendMessage(message);
@@ -250,7 +270,8 @@ public class Game extends Thread{
             WebSocketServer.users.get(playerB.getId()).sendMessage(message);
     }
 
-    private void sendMove() {  // 向两个Client传递移动信息
+    // 向两个Client传递移动信息
+    private void sendMove() {
         lock.lock();
         try {
             JSONObject resp = new JSONObject();
@@ -264,27 +285,19 @@ public class Game extends Thread{
         }
     }
 
-    private String getMapString() {
-        StringBuilder res = new StringBuilder();
-        for (int i = 0; i < rows; i ++ ) {
-            for (int j = 0; j < cols; j ++ ) {
-                res.append(g[i][j]);
-            }
-        }
-        return res.toString();
-    }
-
+    // 更新用户天梯分
     private void updateUserRating(Player player, Integer rating) {
         User user = WebSocketServer.userMapper.selectById(player.getId());
         user.setRating(rating);
         WebSocketServer.userMapper.updateById(user);
     }
 
+    // 将对局记录存入数据库
     private void saveToDatabase() {
         Integer ratingA = WebSocketServer.userMapper.selectById(playerA.getId()).getRating();
         Integer ratingB = WebSocketServer.userMapper.selectById(playerB.getId()).getRating();
 
-        if("A".equals(loser)) {
+        if ("A".equals(loser)) {
             ratingA -= 2;
             ratingB += 5;
         } else if ("B".equals(loser)) {
@@ -313,7 +326,8 @@ public class Game extends Thread{
         WebSocketServer.recordMapper.insert(record);
     }
 
-    private void sendResult() {  // 向两个Client公布结果
+    // 向两个Client传递游戏结果
+    private void sendResult() {
         JSONObject resp = new JSONObject();
         resp.put("event", "result");
         resp.put("loser", loser);
@@ -323,7 +337,7 @@ public class Game extends Thread{
 
     @Override
     public void run() {
-        for (int i = 0; i < 1000; i ++ ) {
+        for (int i = 0; i < 1000; i++) {
             if (nextStep()) {  // 是否获取了两条蛇的下一步操作
                 judge();
                 if (status.equals("playing")) {

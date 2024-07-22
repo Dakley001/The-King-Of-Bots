@@ -14,7 +14,7 @@ public class AddController {
     private AddService addService;
 
     @PostMapping("/api/user/bot/add/")
-    public Map<String, String> add(@RequestParam Map<String, String> data) throws Exception{
+    public Map<String, String> add(@RequestParam Map<String, String> data) throws Exception {
         return addService.add(data);
     }
 }

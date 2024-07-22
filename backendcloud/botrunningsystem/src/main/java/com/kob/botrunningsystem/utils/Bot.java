@@ -23,6 +23,7 @@ public class Bot implements java.util.function.Supplier<Integer> {
         return step % 3 == 1;
     }
 
+    // 获取当前蛇的身体坐标
     public List<Cell> getCells(int sx, int sy, String steps) {
         steps = steps.substring(1, steps.length() - 1);
         List<Cell> res = new ArrayList<>();

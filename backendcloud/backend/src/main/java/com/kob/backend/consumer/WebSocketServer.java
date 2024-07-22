@@ -61,13 +61,14 @@ public class WebSocketServer {
     }
 
 
+    // 创建连接后加入users
     @OnOpen
     public void onOpen(Session session, @PathParam("token") String token) throws IOException {
         this.session = session;
-        System.out.println("connected!");
         Integer userId = JwtAuthentication.getUserId(token);
-        this.user = userMapper.selectById(userId);
+        System.out.println(userId + "connected to WebSocketServer！");
 
+        this.user = userMapper.selectById(userId);
         if (this.user != null) {
             users.put(userId, this);
         } else {
@@ -76,15 +77,17 @@ public class WebSocketServer {
         System.out.println(users);
     }
 
+    // 关闭连接后在users和matchpool移除该user
     @OnClose
     public void onClose() {
-        System.out.println("disconnected!");
+        System.out.println(this.user.getId() + "disconnected！");
         if(this.user != null) {
             users.remove(this.user.getId());
             matchpool.remove(this.user);
         }
     }
 
+    // 传{event, opponent_username, opponent_photo, {a_id, a_sx, a_sy, b_id, b_sx, b_sy, {地图二维数组}}}给Client
     public static void startGame(Integer aId, Integer aBotId, Integer bId, Integer bBotId) {
         User a = userMapper.selectById(aId), b = userMapper.selectById(bId);
         Bot botA = botMapper.selectById(aBotId), botB = botMapper.selectById(bBotId);
@@ -105,10 +108,12 @@ public class WebSocketServer {
 
         game.start();
 
-        JSONObject respGame = new JSONObject();
+        JSONObject respGame = new JSONObject();  // 地图、玩家id、蛇初始位置
+
         respGame.put("a_id", game.getPlayerA().getId());
         respGame.put("a_sx", game.getPlayerA().getSx());
         respGame.put("a_sy", game.getPlayerA().getSy());
+
         respGame.put("b_id", game.getPlayerB().getId());
         respGame.put("b_sx", game.getPlayerB().getSx());
         respGame.put("b_sy", game.getPlayerB().getSy());
@@ -131,6 +136,7 @@ public class WebSocketServer {
             users.get(b.getId()).sendMessage(respB.toJSONString());
     }
 
+    // 开始匹配，转发请求至MatchingSystem
     private void startMatching(Integer botId) {
         System.out.println("start matching!");
         MultiValueMap<String, String> data = new LinkedMultiValueMap<>();
@@ -140,6 +146,7 @@ public class WebSocketServer {
         restTemplate.postForObject(addPlayerUrl, data, String.class);
     }
 
+    // 停止匹配，转发请求至MatchingSystem
     private void stopMatching() {
         System.out.println("stop matching");
         MultiValueMap<String, String> data = new LinkedMultiValueMap<>();
@@ -148,6 +155,7 @@ public class WebSocketServer {
     }
 
 
+    // 设置移动信息
     private void move(int direction) {
         if (game.getPlayerA().getId().equals(user.getId())) {
             if(game.getPlayerA().getBotId().equals(-1))  // 亲自出马
@@ -158,8 +166,9 @@ public class WebSocketServer {
         }
     }
 
+    // 一般当作路由
     @OnMessage
-    public void onMessage(String message, Session session) {  // 一般当作路由
+    public void onMessage(String message, Session session) {
         System.out.println("receive message!");
         JSONObject data = JSONObject.parseObject(message);
         String event = data.getString("event");
@@ -172,11 +181,13 @@ public class WebSocketServer {
         }
     }
 
+    // 错误信息
     @OnError
     public void onError(Session session, Throwable error) {
         error.printStackTrace();
     }
 
+    // 发送信息
     public void sendMessage(String message) {
         synchronized (this.session) {
             try {

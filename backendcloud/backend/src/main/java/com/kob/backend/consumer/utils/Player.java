@@ -18,11 +18,13 @@ public class Player {
     private Integer sy;
     private List<Integer> steps;
 
-    private boolean check_tail_increasing(int step) {  // 检验当前回合，蛇的长度是否增加
+    // 检验当前回合，蛇的长度是否增加
+    private boolean check_tail_increasing(int step) {
         if (step <= 10) return true;
         return step % 3 == 1;
     }
 
+    // 获取该用户的蛇的细胞信息
     public List<Cell> getCells() {
         List<Cell> res = new ArrayList<>();
 
@@ -41,6 +43,7 @@ public class Player {
         return res;
     }
 
+    // 将移动信息转换为字符串
     public String getStepsString() {
         StringBuilder res = new StringBuilder();
         for (int d: steps) {

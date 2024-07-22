@@ -14,6 +14,7 @@ public class ReceiveBotMoveController {
     @Autowired
     private ReceiveBotMoveService receiveBotMoveService;
 
+    // BotRunningSystem发来的WebSocket请求
     @PostMapping("/pk/receive/bot/move/")
     public String receiveBotMove(@RequestParam MultiValueMap<String, String> data) {
         Integer userId = Integer.parseInt(Objects.requireNonNull(data.getFirst("user_id")));

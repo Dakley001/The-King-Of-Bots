@@ -25,25 +25,29 @@ public class Consumer extends Thread {
         Consumer.restTemplate = restTemplate;
     }
 
+
+    // 启动Bot
     public void startTimeout(long timeout, Bot bot) {
-        this.bot = bot;
-        this.start();
+        this.bot = bot;  // 设置当前Consumer线程中的Bot实例
+        this.start();  // 启动当前Consumer线程，新线程开始执行run方法
 
         try {
-            this.join(timeout);  // 新线程执行run，当前线程继续执行this.join(timeout)，最多等待timeout秒
+            this.join(timeout);  // 当前线程等待新线程执行结束，最多等待timeout毫秒
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
-            this.interrupt();  // 中断当前线程
+            this.interrupt();  // 无论新线程是否超时，最终都中断新线程
         }
     }
 
+    // 在给定的代码字符串code中的类名后添加一个唯一标识符uuid
     private String addUid(String code, String uid) {  // 在code中的Bot类名后添加uid
-//        int k = code.indexOf(" implements com.kob.botrunningsystem.utils.BotInterface");
+        // int k = code.indexOf(" implements com.kob.botrunningsystem.utils.BotInterface");
         int k = code.indexOf(" implements java.util.function.Supplier<Integer>");
         return code.substring(0, k) + uid + code.substring(k);
     }
 
+    // 解析并执行Bot代码
     @Override
     public void run() {
         UUID uuid = UUID.randomUUID();
@@ -70,7 +74,7 @@ public class Consumer extends Thread {
 
 //        Integer direction = botInterface.nextMove(bot.getInput());
         Integer direction = botInterface.get();
-        System.out.println("move-direction: " + bot.getUserId() + " " + direction);
+        System.out.println("Move-direction: " + bot.getUserId() + " " + direction);
 
         MultiValueMap<String, String> data = new LinkedMultiValueMap<>();
         data.add("user_id", bot.getUserId().toString());

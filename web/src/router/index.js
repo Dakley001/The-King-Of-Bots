@@ -1,105 +1,105 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import NotFoundView from '@/views/error/NotFoundView.vue';
 import PkIndexView from '@/views/pk/PkIndexView.vue';
 import RanklistIndexView from '@/views/ranklist/RanklistIndexView.vue';
-import RecordIndexView from '@/views/record/RecordIndexView.vue';
 import RecordContentView from '@/views/record/RecordContentView.vue';
-import UserBotIndexView from '@/views/user/bot/UserBotIndexView.vue';
-import NotFoundView from '@/views/error/NotFoundView.vue';
+import RecordIndexView from '@/views/record/RecordIndexView.vue';
 import UserAccountLoginView from '@/views/user/account/UserAccountLoginView.vue';
 import UserAccountRegisterView from '@/views/user/account/UserAccountRegisterView.vue';
+import UserBotIndexView from '@/views/user/bot/UserBotIndexView.vue';
 import store from '@/store';
 
 const routes = [
-  {
-    path: "/",
-    name: "home",
-    redirect: "/pk/",
-    meta: {
-      requestAuth: true,
+    {
+        path: "/",
+        name: "home",
+        redirect: "/pk/",
+        meta: {
+            requestAuth: true,
+        },
     },
-  },
-  {
-    path: "/pk/",
-    name: "pk_index",
-    component: PkIndexView,
-    meta: {
-      requestAuth: true,
+    {
+        path: "/pk/",
+        name: "pk_index",
+        component: PkIndexView,
+        meta: {
+            requestAuth: true,
+        },
     },
-  },
-  {
-    path: "/ranklist/",
-    name: "ranklist_index",
-    component: RanklistIndexView,
-    meta: {
-      requestAuth: true,
+    {
+        path: "/ranklist/",
+        name: "ranklist_index",
+        component: RanklistIndexView,
+        meta: {
+            requestAuth: true,
+        },
     },
-  },
-  {
-    path: "/record/",
-    name: "record_index",
-    component: RecordIndexView,
-    meta: {
-      requestAuth: true,
+    {
+        path: "/record/",
+        name: "record_index",
+        component: RecordIndexView,
+        meta: {
+            requestAuth: true,
+        },
     },
-  },
-  {
-    path: "/record/:recordId/",
-    name: "record_content",
-    component: RecordContentView,
-    meta: {
-      requestAuth: true,
+    {
+        path: "/record/:recordId/",
+        name: "record_content",
+        component: RecordContentView,
+        meta: {
+            requestAuth: true,
+        },
     },
-  },
-  {
-    path: "/user/bot/",
-    name: "user_bot_index",
-    component: UserBotIndexView,
-    meta: {
-      requestAuth: true,
+    {
+        path: "/user/bot/",
+        name: "user_bot_index",
+        component: UserBotIndexView,
+        meta: {
+            requestAuth: true,
+        },
     },
-  },
-  {
-    path: "/user/account/login/",
-    name: "user_account_login",
-    component: UserAccountLoginView,
-    meta: {
-      requestAuth: false,
+    {
+        path: "/user/account/login/",
+        name: "user_account_login",
+        component: UserAccountLoginView,
+        meta: {
+            requestAuth: false,
+        },
     },
-  },
-  {
-    path: "/user/account/register/",
-    name: "user_account_register",
-    component: UserAccountRegisterView,
-    meta: {
-      requestAuth: false,
+    {
+        path: "/user/account/register/",
+        name: "user_account_register",
+        component: UserAccountRegisterView,
+        meta: {
+            requestAuth: false,
+        },
     },
-  },
-  {
-    path: "/404/",
-    name: "404",
-    component: NotFoundView,
-    meta: {
-      requestAuth: false,
+    {
+        path: "/404/",
+        name: "404",
+        component: NotFoundView,
+        meta: {
+            requestAuth: false,
+        },
     },
-  },
-  {
-    path: "/:catchAll(.*)",
-    name: "other_404",
-    redirect: "/404/",
-  },
+    {
+        path: "/:catchAll(.*)",
+        name: "other_404",
+        redirect: "/404/",
+    },
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
-  routes
+    history: createWebHistory(),
+    routes
 })
 
-router.beforeEach((to, from, next) => {
-  if(to.meta.requestAuth && ! store.state.user.is_login) {
-    next({ name: "user_account_login"});
-  } else {
-    next();
-  }
+router.beforeEach((to, from, next) => {  // 访问需登录页面但未登录，路由至登录界面
+    if (to.meta.requestAuth && !store.state.user.is_login) {
+        next({ name: "user_account_login" });
+    } else {
+        next();
+    }
 })
 
 export default router

@@ -14,7 +14,7 @@ public class RemoveController {
     private RemoveService removeService;
 
     @PostMapping("/api/user/bot/remove/")
-    public Map<String, String> remove(@RequestParam Map<String, String> data) throws Exception{
+    public Map<String, String> remove(@RequestParam Map<String, String> data) throws Exception {
         return removeService.remove(data);
     }
 }

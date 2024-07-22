@@ -22,15 +22,18 @@ public class MatchingPool extends Thread {
         MatchingPool.restTemplate = restTemplate;
     }
 
+    // 添加玩家
     public void addPlayer(Integer userId, Integer rating, Integer botId) {
         lock.lock();
         try {
+            players.removeIf(player -> player.getUserId() == userId);  // 修复自我匹配的bug
             players.add(new Player(userId, rating, botId, 0));
         } finally {
             lock.unlock();
         }
     }
 
+    // 移除玩家
     public void removePlayer(Integer userId) {
         lock.lock();
         try {
@@ -46,20 +49,23 @@ public class MatchingPool extends Thread {
         }
     }
 
+    // 增加权重
     private void increaseWaitingTime() {  // 将所有当前玩家的等待时间加1
         for (Player player: players) {
             player.setWaitingTime(player.getWaitingTime() + 1);
         }
     }
 
-    private boolean checkMatched(Player a, Player b) {  // 判断两名玩家是否匹配
+    // 判断两名玩家是否匹配
+    private boolean checkMatched(Player a, Player b) {
         int ratingDelta = Math.abs(a.getRating() - b.getRating());
         int waitingTime = Math.min(a.getWaitingTime(), b.getWaitingTime());  // 你情我愿
         return ratingDelta <= waitingTime * 10;
     }
 
-    private void sendResult(Player a, Player b) {  // 返回匹配结果
-        System.out.println("send result: " + a + " " + b);
+    // 返回匹配结果
+    private void sendResult(Player a, Player b) {
+        System.out.println("Match result: " + a + " " + b);
         MultiValueMap<String, String> data = new LinkedMultiValueMap<>();
         data.add("a_id", a.getUserId().toString());
         data.add("a_bot_id", a.getBotId().toString());
@@ -68,7 +74,8 @@ public class MatchingPool extends Thread {
         restTemplate.postForObject(startGameUrl, data, String.class);
     }
 
-    private void matchPlayers() {  // 尝试匹配所有玩家
+    // 尝试匹配所有玩家
+    private void matchPlayers() {
         boolean[] used = new boolean[players.size()];
         for (int i = 0; i < players.size(); i ++ ) {
             if (used[i]) continue;

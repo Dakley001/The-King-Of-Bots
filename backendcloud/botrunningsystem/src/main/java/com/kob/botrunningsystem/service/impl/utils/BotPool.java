@@ -11,11 +11,12 @@ public class BotPool extends Thread{
     private final Condition condition = lock.newCondition();
     private final Queue<Bot> bots = new LinkedList<>();
 
+    // 增加Bot
     public void addBot(Integer userId, String botCode, String input) {
         lock.lock();
         try {
             bots.add(new Bot(userId, botCode, input));
-            condition.signalAll();
+            condition.signalAll();  // 唤醒所有等待在此条件上的线程（如果有）
         } finally {
             lock.unlock();
         }
@@ -32,7 +33,7 @@ public class BotPool extends Thread{
             lock.lock();
             if(bots.isEmpty()) {
                 try {
-                    condition.await();
+                    condition.await();  // 如果 bots 队列为空,，使当前线程等待，直到有新的 Bot 任务被添加并唤醒
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                     lock.unlock();

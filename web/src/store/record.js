@@ -1,29 +1,28 @@
-
 const ModuleRecord = {
-  state: {
-    is_record: false,
-    a_steps: "",
-    b_steps: "",
-    record_loser: "",
-  },
-  getters: {
-  },
-  mutations: {
-    updateIsRecord(state, is_record) {
-      state.is_record = is_record;
+    state: {
+        is_record: false,  // 是否为录像
+        a_steps: "",  // 蓝方的步数
+        b_steps: "",  // 红方的步数
+        record_loser: "",  // 录像的败方
     },
-    updateSteps(state, data) {
-      state.a_steps = data.a_steps;
-      state.b_steps = data.b_steps;
+    getters: {
     },
-    updateRecordLoser(state, loser) {
-      state.record_loser = loser;
+    mutations: {
+        updateIsRecord(state, is_record) {
+            state.is_record = is_record;
+        },
+        updateSteps(state, data) {
+            state.a_steps = data.a_steps;
+            state.b_steps = data.b_steps;
+        },
+        updateRecordLoser(state, loser) {
+            state.record_loser = loser;
+        }
+    },
+    actions: {
+    },
+    modules: {
     }
-  },
-  actions: {
-  },
-  modules: {
-  }
 }
 
 export default ModuleRecord

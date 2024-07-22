@@ -1,17 +1,17 @@
 <template>
-  <PlayGround></PlayGround>
+    <PlayGround></PlayGround>
 </template>
 
 <script>
 import PlayGround from '@/components/PlayGround.vue'
 
 export default {
-  name: "RecordContentView",
-  components: {
-    PlayGround,
-  },
-  setup() {
-  }
+    name: "RecordContentView",
+    components: {
+        PlayGround,
+    },
+    setup() {
+    }
 }
 </script>
 

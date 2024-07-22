@@ -33,20 +33,20 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public boolean isAccountNonExpired() {
         return true;
-    }
+    }  // 判断账户是否未过期
 
     @Override
     public boolean isAccountNonLocked() {
         return true;
-    }
+    }  // 判断账户是否未锁定
 
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
-    }
+    }  // 判断凭证是否未过期
 
     @Override
     public boolean isEnabled() {
         return true;
-    }
+    }  // 判断用户是否启用
 }

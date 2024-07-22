@@ -33,7 +33,6 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 );
 
-        System.out.println("test");
         return http.build();
     }
 }

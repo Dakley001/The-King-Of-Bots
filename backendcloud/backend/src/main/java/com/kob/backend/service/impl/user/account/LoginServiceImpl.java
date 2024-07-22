@@ -24,23 +24,16 @@ public class LoginServiceImpl implements LoginService {
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(username, password);
 
-        try {
-            Authentication authenticate = authenticationManager.authenticate(authenticationToken);  // 登录失败会自动处理
+        Authentication authenticate = authenticationManager.authenticate(authenticationToken);  // 登录失败会自动处理
 
-            UserDetailsImpl loginUser = (UserDetailsImpl) authenticate.getPrincipal();
-            User user = loginUser.getUser();
-            String jwt = JwtUtil.createJWT(user.getId().toString());
+        UserDetailsImpl loginUser = (UserDetailsImpl) authenticate.getPrincipal();
+        User user = loginUser.getUser();
+        String jwt = JwtUtil.createJWT(user.getId().toString());
 
-            Map<String, String> map = new HashMap<>();
-            map.put("error_message", "success");
-            map.put("token", jwt);
+        Map<String, String> map = new HashMap<>();
+        map.put("error_message", "success");
+        map.put("token", jwt);
 
-            return map;
-        } catch (Exception e) {
-            Map<String, String> map = new HashMap<>();
-            map.put("error_message", "账号不存在，请先注册一个账号");
-
-            return map;
-        }
+        return map;
     }
 }

@@ -17,20 +17,15 @@ public class InfoServiceImpl implements InfoService {
         UsernamePasswordAuthenticationToken authenticationToken =
                 (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
 
-        try {
-            UserDetailsImpl infoUser = (UserDetailsImpl) authenticationToken.getPrincipal();
-            User user = infoUser.getUser();
+        UserDetailsImpl infoUser = (UserDetailsImpl) authenticationToken.getPrincipal();
+        User user = infoUser.getUser();
 
-            Map<String, String> map = new HashMap<>();
-            map.put("error_message", "success");
-            map.put("id", user.getId().toString());
-            map.put("username", user.getUsername());
-            map.put("photo", user.getPhoto());
-            return map;
-        } catch (Exception e) {
-            Map<String, String> map = new HashMap<>();
-            map.put("error_message", "账号不存在，请先注册一个账号");
-            return map;
-        }
+        Map<String, String> map = new HashMap<>();
+        map.put("error_message", "success");
+        map.put("id", user.getId().toString());
+        map.put("username", user.getUsername());
+        map.put("photo", user.getPhoto());
+
+        return map;
     }
 }
