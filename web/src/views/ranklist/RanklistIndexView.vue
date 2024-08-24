@@ -80,7 +80,7 @@ export default {
         const pull_page = page => {
             current_page = page;
             $.ajax({
-                url: "https://app6889.acapp.acwing.com.cn/api/ranklist/getlist/",
+                url: "https://www.buugame.top/api/ranklist/getlist/",
                 data: {
                     page,
                 },

@@ -21,8 +21,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.*;
 
 @Component
 @ServerEndpoint("/websocket/{token}")  // 注意不要以'/'结尾
@@ -40,6 +39,9 @@ public class WebSocketServer {
     public Game game = null;
     private final static String addPlayerUrl = "http://127.0.0.1:3001/player/add/";
     private final static String removePlayerUrl = "http://127.0.0.1:3001/player/remove/";
+
+//    private ScheduledExecutorService heartbeatScheduler;
+//    private boolean heartbeatReceived = true;
 
 
     @Autowired
@@ -71,6 +73,7 @@ public class WebSocketServer {
         this.user = userMapper.selectById(userId);
         if (this.user != null) {
             users.put(userId, this);
+//            startHeartbeatCheck();
         } else {
             this.session.close();
         }
@@ -84,6 +87,7 @@ public class WebSocketServer {
         if(this.user != null) {
             users.remove(this.user.getId());
             matchpool.remove(this.user);
+//            stopHeartbeatCheck();
         }
     }
 
@@ -154,7 +158,6 @@ public class WebSocketServer {
         restTemplate.postForObject(removePlayerUrl, data, String.class);
     }
 
-
     // 设置移动信息
     private void move(int direction) {
         if (game.getPlayerA().getId().equals(user.getId())) {
@@ -179,6 +182,9 @@ public class WebSocketServer {
         } else if ("move".equals(event)) {
             move(data.getInteger("direction"));
         }
+//        } else if ("heartbeat".equals(event)) {
+//            heartbeatReceived = true;
+//        }
     }
 
     // 错误信息
@@ -197,4 +203,27 @@ public class WebSocketServer {
             }
         }
     }
+
+//    // 启动心跳检测
+//    private void startHeartbeatCheck() {
+//        heartbeatScheduler = Executors.newScheduledThreadPool(1);
+//        heartbeatScheduler.scheduleAtFixedRate(() -> {
+//            if (!heartbeatReceived) {
+//                try {
+//                    this.session.close();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            } else {
+//                heartbeatReceived = false;
+//            }
+//        }, 5, 5, TimeUnit.SECONDS);
+//    }
+//
+//    // 停止心跳检测
+//    private void stopHeartbeatCheck() {
+//        if (heartbeatScheduler != null && !heartbeatScheduler.isShutdown()) {
+//            heartbeatScheduler.shutdown();
+//        }
+//    }
 }

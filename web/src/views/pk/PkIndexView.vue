@@ -28,11 +28,18 @@ export default {
     },
     setup() {
         const store = useStore();
-        const socketUrl = `wss://app6889.acapp.acwing.com.cn/websocket/${store.state.user.token}/`;
+        const socketUrl = `wss://www.buugame.top/websocket/${store.state.user.token}/`;
 
         store.commit("updateIsRecord", false);
 
         let socket = null;
+        // let heartbeatInterval = null;
+        // const sendHeartbeat = () => {
+        //     if (socket && socket.readyState === WebSocket.OPEN) {
+        //         socket.send(JSON.stringify({ event: 'heartbeat' }));
+        //     }
+        // };
+ 
         onMounted(() => {
             store.commit("updateOpponent", {
                 username: "我的对手",
@@ -43,6 +50,7 @@ export default {
             socket.onopen = () => {
                 console.log("Connected to the WebSocketServer！");
                 store.commit("updateSocket", socket);
+                // heartbeatInterval = setInterval(sendHeartbeat, 5000); // 5秒发送一次心跳
             }
 
             socket.onmessage = msg => {
@@ -57,7 +65,6 @@ export default {
                     }, 200);  // 200ms转为实时游戏对战界面
                     store.commit("updateGame", data.game);
                 } else if (data.event === "move") {
-                    console.log(data);
                     const game = store.state.pk.gameObject;
                     const [snake0, snake1] = game.snakes;
                     snake0.set_direction(data.a_direction);
@@ -78,11 +85,13 @@ export default {
 
             socket.onclose = () => {
                 console.log("Disconnected！");
+                // clearInterval(heartbeatInterval);
             }
         });
 
         onUnmounted(() => {
             socket.close();
+            // clearInterval(heartbeatInterval);
             store.commit("updateStatus", "matching");
             store.commit("updateLoser", "none");
         })

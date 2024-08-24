@@ -111,7 +111,7 @@ export class GameMap extends AcGameObjects {
         if (this.check_ready()) {
             this.next_step();  // 两条蛇准备移动则移动
         }
-        console.log("upate map");
+        // console.log("upate map");
         this.render();
     }
 

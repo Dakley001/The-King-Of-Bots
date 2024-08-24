@@ -11,7 +11,7 @@ export class Wall extends AcGameObjects {
     }
 
     update() {  // 刷新
-        console.log("update walls");
+        // console.log("update walls");
         this.render();
     }
 

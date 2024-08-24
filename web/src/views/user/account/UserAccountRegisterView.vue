@@ -44,7 +44,7 @@ export default {
 
         const register = () => {
             $.ajax({
-                url: "https://app6889.acapp.acwing.com.cn/api/user/account/register/",
+                url: "https://www.buugame.top/api/user/account/register/",
                 type: "POST",
                 data: {
                     username: username.value,

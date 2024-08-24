@@ -35,7 +35,7 @@ const ModuleUser = {
     actions: {
         login(context, data) {
             $.ajax({
-                url: "https://app6889.acapp.acwing.com.cn/api/user/account/token/",
+                url: "https://www.buugame.top/api/user/account/token/",
                 type: "POST",
                 data: {
                     username: data.username,
@@ -57,7 +57,7 @@ const ModuleUser = {
         },
         getinfo(context, data) {
             $.ajax({
-                url: "https://app6889.acapp.acwing.com.cn/api/user/account/info/",
+                url: "https://www.buugame.top/api/user/account/info/",
                 type: "GET",
                 headers: {
                     Authorization: "Bearer " + context.state.token,

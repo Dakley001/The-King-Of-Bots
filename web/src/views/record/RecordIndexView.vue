@@ -3,8 +3,8 @@
         <table class="table table-striped table-hover" style="text-align: center;">
             <thead>
                 <tr>
-                    <th>A</th>
-                    <th>B</th>
+                    <th>蓝方</th>
+                    <th>红方</th>
                     <th>对战结果</th>
                     <th>对战时间</th>
                     <th>操作</th>
@@ -95,7 +95,7 @@ export default {
         const pull_page = page => {
             current_page = page;
             $.ajax({
-                url: "https://app6889.acapp.acwing.com.cn/api/record/getlist/",
+                url: "https://www.buugame.top/api/record/getlist/",
                 data: {
                     page,
                 },
