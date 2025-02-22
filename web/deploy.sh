@@ -1,0 +1,1 @@
+scp -r dist/* kob-server:kob/web/
